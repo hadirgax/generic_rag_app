@@ -58,7 +58,7 @@ env-init: env-create
 env-remove:
 	conda remove -n $(VENV_NAME) --all -y
 
-env-update: env-remove env-create env-install
+env-update: env-remove env-install
 
 print-conda-activate:
 	@echo "#\n# To activate this environment, use:\n#\n#\t$$ conda activate $(VENV_NAME)"
@@ -69,6 +69,9 @@ print-conda-activate:
 
 run:
 	./scripts/run.sh
+
+run-docs-loaders:
+	./scripts/run_docs_loaders.sh
 
 
 # ===== Test =====

@@ -1,6 +1,9 @@
 # dependencies
 
 langchain
+# langchain-community  # deprecated
+langchain-docling
 langchain-core
 langchain-ollama
 langgraph
+python-dotenv
