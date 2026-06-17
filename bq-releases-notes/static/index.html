@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigQuery Release Notes Tracker</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Meta tags for basic SEO -->
+    <meta name="description" content="Track, filter, and share Google BigQuery release notes and updates.">
+    <meta name="theme-color" content="#0f172a">
+</head>
+<body>
+    <div class="stars-bg"></div>
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <svg class="bq-logo" viewBox="0 0 24 24" width="36" height="36">
+                    <path fill="#4285F4" d="M19.2 12c0-.7-.1-1.3-.3-2h-6.9v4h4c-.2 1-.7 1.8-1.5 2.3v3h2.4c1.4-1.3 2.3-3.2 2.3-5.3z"/>
+                    <path fill="#34A853" d="M12 19.3c1.9 0 3.6-.6 4.8-1.7l-2.4-3c-.7.5-1.5.8-2.4.8-1.8 0-3.4-1.2-4-2.9H1.5v3.1c1.2 2.4 3.7 4.7 6.5 4.7z"/>
+                    <path fill="#FBBC05" d="M8 12.5c-.2-.5-.3-1.1-.3-1.7s.1-1.2.3-1.7V6H1.5C.5 8 0 10.2 0 12.5S.5 17 1.5 19l6.5-6.5z"/>
+                    <path fill="#EA4335" d="M12 4.7c1 0 2 .4 2.7 1l2-2C15.6 2.7 13.9 2 12 2c-2.8 0-5.3 2.3-6.5 4.7l4 3.1c.6-1.7 2.2-3.1 4-3.1z"/>
+                </svg>
+                <div class="title-text">
+                    <h1>BigQuery Release Notes</h1>
+                    <p class="subtitle">Stay updated with the latest changes in Google BigQuery</p>
+                </div>
+            </div>
+            
+            <div class="header-actions">
+                <div id="cache-status" class="cache-status">
+                    <span class="pulse-indicator"></span>
+                    <span class="status-label">Loading feed...</span>
+                </div>
+                <button id="refresh-btn" class="btn btn-primary" title="Refresh Release Notes">
+                    <svg class="icon spinner-icon" viewBox="0 0 24 24" width="20" height="20">
+                        <path fill="currentColor" d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                    </svg>
+                    <span>Refresh</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Controls Pane -->
+        <section class="controls-card">
+            <div class="search-box">
+                <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20">
+                    <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <input type="text" id="search-input" placeholder="Search updates (e.g., 'Gemini', 'partition', 'billing')..." autocomplete="off">
+                <button id="clear-search" class="clear-btn" style="display: none;">&times;</button>
+            </div>
+
+            <div class="filter-section">
+                <span class="filter-label">Filter by type:</span>
+                <div id="category-filters" class="category-filters">
+                    <!-- Dynamic categories injected here -->
+                    <button class="category-tag active" data-category="all">
+                        All <span class="tag-count">0</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading / Empty States -->
+        <div id="loading-state" class="state-container">
+            <div class="loader">
+                <div class="circle"></div>
+                <div class="circle"></div>
+                <div class="circle"></div>
+            </div>
+            <p>Fetching the latest BigQuery release notes...</p>
+        </div>
+
+        <div id="empty-state" class="state-container" style="display: none;">
+            <svg class="empty-icon" viewBox="0 0 24 24" width="64" height="64">
+                <path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <h3>No Updates Found</h3>
+            <p>We couldn't find any release notes matching your search or filters.</p>
+            <button id="reset-filters-btn" class="btn btn-secondary">Reset Filters</button>
+        </div>
+
+        <!-- Release Notes Container -->
+        <main id="releases-container" class="releases-timeline">
+            <!-- Dynamic dates and release notes injected here -->
+        </main>
+    </div>
+
+    <!-- Share Composer Modal -->
+    <div id="share-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-card">
+            <!-- Modal Header with Tabs -->
+            <div class="modal-tabs-header">
+                <div class="tabs-list">
+                    <button id="tab-btn-x" class="tab-btn active" data-tab="x">
+                        <svg viewBox="0 0 24 24" width="16" height="16" class="icon tab-icon">
+                            <path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                        <span>X / Twitter</span>
+                    </button>
+                    <button id="tab-btn-linkedin" class="tab-btn" data-tab="linkedin">
+                        <svg viewBox="0 0 24 24" width="16" height="16" class="icon tab-icon">
+                            <path fill="currentColor" d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+                        </svg>
+                        <span>LinkedIn</span>
+                    </button>
+                </div>
+                <button id="close-modal-btn" class="close-modal-btn" aria-label="Close modal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Tab Pane 1: X/Twitter -->
+                <div id="tab-content-x" class="tab-content active">
+                    <p class="modal-instruction">Edit your post below. Keep it concise to fit within the character limit.</p>
+                    
+                    <div class="composer-container">
+                        <textarea id="tweet-textarea" rows="6" placeholder="What's happening?"></textarea>
+                        
+                        <div class="composer-footer">
+                            <button id="auto-shorten-btn" class="btn btn-secondary btn-sm" title="Summarize text to fit the character limit automatically">
+                                <svg class="icon" viewBox="0 0 24 24" width="14" height="14">
+                                    <path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                                </svg>
+                                <span>Auto-Shorten</span>
+                            </button>
+                            
+                            <div id="char-counter" class="char-counter">280</div>
+                        </div>
+                    </div>
+
+                    <div id="tweet-warning" class="tweet-warning" style="display: none;">
+                        <svg viewBox="0 0 24 24" width="16" height="16">
+                            <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                        </svg>
+                        <span>Your text exceeds the 280-character limit for standard X/Twitter posts. You can still tweet, but it may be split or truncated on X.</span>
+                    </div>
+
+                    <div class="tweet-preview-card">
+                        <div class="preview-header">
+                            <div class="preview-avatar">BQ</div>
+                            <div class="preview-user-details">
+                                <span class="preview-display-name">BigQuery Updates</span>
+                                <span class="preview-handle">@BigQueryNotes</span>
+                            </div>
+                        </div>
+                        <div id="tweet-preview-text" class="preview-text">
+                            <!-- Preview text mirrored here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Pane 2: LinkedIn -->
+                <div id="tab-content-linkedin" class="tab-content">
+                    <p class="modal-instruction">Edit your professional post below. LinkedIn supports longer posts (up to 3000 chars).</p>
+                    
+                    <div class="composer-container">
+                        <textarea id="linkedin-textarea" rows="6" placeholder="Write your professional update..."></textarea>
+                        
+                        <div class="composer-footer">
+                            <span class="info-badge">
+                                <svg viewBox="0 0 24 24" width="14" height="14" style="margin-top: 1px;">
+                                    <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                                </svg>
+                                Auto-copied on Share
+                            </span>
+                            <div id="linkedin-char-counter" class="char-counter">3000</div>
+                        </div>
+                    </div>
+
+                    <div class="tweet-warning warning-blue">
+                        <svg viewBox="0 0 24 24" width="16" height="16" style="flex-shrink: 0; margin-top: 2px;">
+                            <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                        </svg>
+                        <span>LinkedIn sharing does not support pre-filling post text via URLs. Clicking <strong>Share on LinkedIn</strong> will copy this text and open the share window so you can paste it.</span>
+                    </div>
+
+                    <div class="linkedin-preview-card">
+                        <div class="li-preview-header">
+                            <div class="li-preview-avatar">BQ</div>
+                            <div class="li-preview-details">
+                                <span class="li-preview-name">BigQuery Release Tracker</span>
+                                <span class="li-preview-headline">Enterprise Data Warehouse Insights</span>
+                                <span class="li-preview-time">Just now • 🌐</span>
+                            </div>
+                        </div>
+                        <div id="linkedin-preview-text" class="li-preview-text">
+                            <!-- LinkedIn Preview text mirrored here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="copy-share-btn" class="btn btn-secondary">
+                    <svg viewBox="0 0 24 24" width="16" height="16" class="icon">
+                        <path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                    </svg>
+                    <span>Copy Text</span>
+                </button>
+                <button id="post-share-btn" class="btn btn-primary">
+                    <svg viewBox="0 0 24 24" width="16" height="16" class="icon btn-share-icon">
+                        <path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                    <span id="btn-share-text">Post to X</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast-notification" style="display: none;">
+        <span id="toast-message">Copied to clipboard!</span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
